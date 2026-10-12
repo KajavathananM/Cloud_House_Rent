@@ -1,0 +1,22 @@
+# 1. Start with a lightweight official Python image
+FROM python:3.10-slim
+
+# 2. Set the working directory inside the container
+WORKDIR /app
+
+# 3. Copy your list of python requirements into the container
+COPY requirements.txt .
+
+# 4. Install the required python packages (FastAPI, tflite, etc.)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 5. Copy your backend code, your TFLite model, and your JSON scaler params into the container
+COPY main.py .
+COPY rental_valuation_quant.tflite .
+COPY scaler_params.json .
+
+# 6. Expose the port that FastAPI runs on
+EXPOSE 8000
+
+# 7. Command to run your app when the container starts
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
